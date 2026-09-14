@@ -145,7 +145,19 @@ public class RenderController {
             partVisibility.add(visibilityDefault);
             int i = 0;
             Map<String, JsonElement> capturedVisibility = new HashMap<>();
-            List<String> sorted = new ArrayList<>(bones.keySet());
+            // The bones created by TranslucencySplitter (`<bone>_t`) only exist in the pack: the
+            // server never publishes them, so they must not take an index in the sorted list —
+            // otherwise every bone sorted after them (and every `uv_*` bone whose parent is
+            // looked up with `sorted.indexOf`) is shifted by one bit against the server. They
+            // get their visibility copied from the bone they were split from, below.
+            Set<String> splitBones = new HashSet<>();
+            for (List<String[]> splits : entity.getTranslucentSplits().values()) {
+                for (String[] split : splits) splitBones.add(split[0].toLowerCase());
+            }
+            List<String> sorted = new ArrayList<>();
+            for (String boneName : bones.keySet()) {
+                if (!splitBones.contains(boneName.toLowerCase())) sorted.add(boneName);
+            }
             Map<String, String> originalId = new HashMap<>();
             ListIterator<String> iterator = sorted.listIterator();
             while (iterator.hasNext()) {
