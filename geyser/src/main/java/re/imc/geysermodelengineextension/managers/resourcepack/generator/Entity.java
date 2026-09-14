@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import me.zimzaza4.geyserutils.geyser.GeyserUtils;
 import re.imc.geysermodelengineextension.managers.resourcepack.generator.data.TextureData;
+import re.imc.geysermodelengineextension.util.BooleanPacker;
 import re.imc.geysermodelengineextension.util.ShortHashUtil;
 
 import java.util.*;
@@ -137,13 +138,13 @@ public class Entity {
         if (geometry == null) return;
 
         if (!modelConfig.isDisablePartVisibility()) {
-            for (int i = 0; i < Math.ceil(geometry.getBones().size() / 24f); i++) {
+            for (int i = 0; i < Math.ceil(geometry.getBones().size() / (float) BooleanPacker.MAX_BOOLEANS); i++) {
                 GeyserUtils.addProperty(id, namespace + ":" + "bone" + i, Integer.class);
             }
         }
 
         if (animation != null) {
-            for (int i = 0; i < Math.ceil(animation.getAnimationIds().size() / 24f); i++) {
+            for (int i = 0; i < Math.ceil(animation.getAnimationIds().size() / (float) BooleanPacker.MAX_BOOLEANS); i++) {
                 GeyserUtils.addProperty(id, namespace + ":" + "anim" + i, Integer.class);
             }
         }

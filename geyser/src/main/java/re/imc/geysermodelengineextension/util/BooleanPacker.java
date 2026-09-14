@@ -4,7 +4,11 @@ import java.util.*;
 
 public class BooleanPacker {
 
-    public static final int MAX_BOOLEANS = 24;
+    // Nombre de booleens par propriete entiere Bedrock. GeyserUtils declare chaque propriete sur
+    // [-1 000 000 ; 1 000 000] et le client ecrete a cette plage : 2^19 - 1 = 524 287 tient,
+    // 2^20 - 1 ne tient plus. Doit rester egal a `BooleanPacker.MAX_BOOLEANS` du module Paper,
+    // qui publie les valeurs. Le pack et le greffon se deploient donc en paire.
+    public static final int MAX_BOOLEANS = 19;
 
     public static int booleansToInt(List<Boolean> booleans) {
         int result = 0;

@@ -4,6 +4,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import re.imc.geysermodelengineextension.GeyserModelEngineExtension;
+import re.imc.geysermodelengineextension.util.BooleanPacker;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -49,9 +50,9 @@ public class AnimationController {
         Collections.sort(sorted);
         for (String id : sorted) {
             id = id.replace(" ", "_");
-            int n = (int) Math.pow(2, (i % 24));
+            int n = 1 << (i % BooleanPacker.MAX_BOOLEANS);
 
-            JsonObject controller = JsonParser.parseString(CONTROLLER_TEMPLATE.replace("%anim%", id).replace("%query%", "math.mod(math.floor(query.property('" +  extension.getConfigManager().getConfig().getString("models.namespace") + ":anim" + i / 24 + "') / " + n + "), 2)")).getAsJsonObject();
+            JsonObject controller = JsonParser.parseString(CONTROLLER_TEMPLATE.replace("%anim%", id).replace("%query%", "math.mod(math.floor(query.property('" +  extension.getConfigManager().getConfig().getString("models.namespace") + ":anim" + i / BooleanPacker.MAX_BOOLEANS + "') / " + n + "), 2)")).getAsJsonObject();
             animationControllers.add("controller.animation." + animation.getModelId() + "." + id, controller);
             i++;
             if (entity != null) {

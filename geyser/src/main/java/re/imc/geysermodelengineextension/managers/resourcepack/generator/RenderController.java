@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import re.imc.geysermodelengineextension.GeyserModelEngineExtension;
 import re.imc.geysermodelengineextension.managers.resourcepack.generator.data.BoneData;
 import re.imc.geysermodelengineextension.managers.resourcepack.generator.data.TextureData;
+import re.imc.geysermodelengineextension.util.BooleanPacker;
 import re.imc.geysermodelengineextension.util.ShortHashUtil;
 
 import javax.imageio.ImageIO;
@@ -198,11 +199,11 @@ public class RenderController {
                         index = sorted.indexOf(bone.getParent());
                     }
 
-                    int n = (int) Math.pow(2, (index % 24));
+                    int n = 1 << (index % BooleanPacker.MAX_BOOLEANS);
                     if (entity.getModelConfig().isDisablePartVisibility()) {
                         visibilityItem.addProperty(boneName, true);
                     } else {
-                        visibilityItem.addProperty(boneName, "math.mod(math.floor(query.property('" + namespace + ":bone" + index / 24 + "') / " + n + "), 2) == 1");
+                        visibilityItem.addProperty(boneName, "math.mod(math.floor(query.property('" + namespace + ":bone" + index / BooleanPacker.MAX_BOOLEANS + "') / " + n + "), 2) == 1");
                     }
                     partVisibility.add(visibilityItem);
                     capturedVisibility.put(boneName, visibilityItem.get(boneName));
