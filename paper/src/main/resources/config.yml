@@ -19,5 +19,6 @@ options:
     send-data: false
     location: false
     death: false
+    bones: false # logs the published bone visibility contract once per model
   hooks:
     floodgate: true # Recommended method
