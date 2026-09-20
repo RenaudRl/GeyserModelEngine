@@ -14,7 +14,9 @@ dependencies {
 }
 
 java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(21))
+    // Paper 26.3 et BetterModel 3.5.0 sont publies pour la JVM 25 : rester en 21
+    // fait echouer la RESOLUTION, pas la compilation.
+    toolchain.languageVersion.set(JavaLanguageVersion.of(25))
 }
 
 tasks.compileJava {

@@ -26,6 +26,26 @@ publishing {
 }
 
 repositories {
+    // Depot Maven statique BTC Studio : commite sous BTCVelocity/repo et televerse tel quel.
+    // Nos forks (BetterModel, packetevents) y publient sous les coordonnees AMONT ; le filtre
+    // epingle donc explicitement ces modules ici, pour qu ils ne soient jamais resolus depuis
+    // Maven Central, ou les memes coordonnees portent le code amont.
+    exclusiveContent {
+        forRepository {
+            maven {
+                name = "btcRepo"
+                url = uri(
+                    providers.gradleProperty("btcRepoDir")
+                        .getOrElse(rootProject.file("../BTCVelocity/repo").absolutePath)
+                )
+            }
+        }
+        filter {
+            includeModule("io.github.toxicity188", "bettermodel-api")
+            includeModule("io.github.toxicity188", "bettermodel-bukkit-api")
+        }
+    }
+
     mavenCentral()
     maven("https://repo.papermc.io/repository/maven-public/")
     maven("https://central.sonatype.com/repository/maven-snapshots/")
@@ -39,12 +59,12 @@ repositories {
 }
 
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:1.21.11-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:26.3.build.26-alpha")
     implementation("dev.jorel:commandapi-paper-shade:12.0.0")
 
     compileOnly("com.ticxo.modelengine:ModelEngine:R4.1.0")
-    compileOnly("io.github.toxicity188:bettermodel-api:2.2.0")
-    compileOnly("io.github.toxicity188:bettermodel-bukkit-api:2.2.0")
+    compileOnly("io.github.toxicity188:bettermodel-api:3.5.0")
+    compileOnly("io.github.toxicity188:bettermodel-bukkit-api:3.5.0")
     
     compileOnly(files("libs/geyserutils-spigot-1.0-SNAPSHOT.jar"))
     compileOnly("org.geysermc.floodgate:api:2.2.4-SNAPSHOT")
@@ -56,7 +76,9 @@ dependencies {
 }
 
 java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(21))
+    // Paper 26.3 et BetterModel 3.5.0 sont publies pour la JVM 25 : rester en 21
+    // fait echouer la RESOLUTION, pas la compilation.
+    toolchain.languageVersion.set(JavaLanguageVersion.of(25))
 }
 
 tasks.compileJava {
