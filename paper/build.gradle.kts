@@ -43,6 +43,12 @@ repositories {
         filter {
             includeModule("io.github.toxicity188", "bettermodel-api")
             includeModule("io.github.toxicity188", "bettermodel-bukkit-api")
+            // packetevents est EMBARQUE (shadow) dans ce jar : la copie doit etre celle qui
+            // connait le NMS 26.3 (2.14.0, fork BTC), sinon SpigotReflectionUtil echoue au
+            // chargement sur NMS_ITEM_STACK et le plugin ne demarre pas.
+            includeModule("com.github.retrooper", "packetevents-spigot")
+            includeModule("com.github.retrooper", "packetevents-api")
+            includeModule("com.github.retrooper", "packetevents-netty-common")
         }
     }
 
@@ -69,7 +75,7 @@ dependencies {
     compileOnly(files("libs/geyserutils-spigot-1.0-SNAPSHOT.jar"))
     compileOnly("org.geysermc.floodgate:api:2.2.4-SNAPSHOT")
 
-    implementation("com.github.retrooper:packetevents-spigot:2.13.0")
+    implementation("com.github.retrooper:packetevents-spigot:2.14.0")
     implementation("org.bstats:bstats-bukkit:3.0.2")
 
     implementation("org.reflections:reflections:0.10.2")
