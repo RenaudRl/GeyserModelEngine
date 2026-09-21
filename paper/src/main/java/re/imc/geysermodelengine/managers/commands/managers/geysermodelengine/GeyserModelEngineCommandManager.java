@@ -1,6 +1,9 @@
 package re.imc.geysermodelengine.managers.commands.managers.geysermodelengine;
 
-import dev.jorel.commandapi.CommandAPICommand;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
+import io.papermc.paper.command.brigadier.Commands;
+import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import re.imc.geysermodelengine.GeyserModelEngine;
 import re.imc.geysermodelengine.commands.geysermodelenginecommands.GeyserModelEngineReloadCommand;
 import re.imc.geysermodelengine.managers.commands.CommandManagers;
@@ -15,15 +18,16 @@ public class GeyserModelEngineCommandManager implements CommandManagers {
     public GeyserModelEngineCommandManager(GeyserModelEngine plugin) {
         commands.add(new GeyserModelEngineReloadCommand(plugin));
 
-        registerCommand();
+        registerCommand(plugin);
     }
 
-    private void registerCommand() {
-        CommandAPICommand geyserModelEngineCommand = new CommandAPICommand(getName());
-
-        commands.forEach(subCommands -> geyserModelEngineCommand.withSubcommand(subCommands.onCommand()));
-
-        geyserModelEngineCommand.register();
+    private void registerCommand(GeyserModelEngine plugin) {
+        // Paper builds the command tree itself on each (re)load; the handler runs every time.
+        plugin.getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, event -> {
+            LiteralArgumentBuilder<CommandSourceStack> root = Commands.literal(getName());
+            commands.forEach(subCommands -> root.then(subCommands.onCommand()));
+            event.registrar().register(root.build());
+        });
     }
 
     @Override

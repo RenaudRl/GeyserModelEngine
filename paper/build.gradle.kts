@@ -66,7 +66,6 @@ repositories {
 
 dependencies {
     compileOnly("io.papermc.paper:paper-api:26.3.build.26-alpha")
-    implementation("dev.jorel:commandapi-paper-shade:12.0.0")
 
     compileOnly("com.ticxo.modelengine:ModelEngine:R4.1.0")
     compileOnly("io.github.toxicity188:bettermodel-api:3.5.0")
@@ -95,9 +94,6 @@ tasks.shadowJar {
     archiveFileName.set("${rootProject.name}-${version}.jar")
 
     exclude("plugin.yml") // PacketEvents' plugin.yml does not belong into the shadow jar
-
-    relocate("dev.jorel.commandapi", "re.imc.geysermodelengine.libs.commandapi")
-
     relocate("com.github.retrooper", "re.imc.geysermodelengine.libs.com.github.retrooper.packetevents")
     relocate("io.github.retrooper", "re.imc.geysermodelengine.libs.io.github.retrooper.packetevents")
 
