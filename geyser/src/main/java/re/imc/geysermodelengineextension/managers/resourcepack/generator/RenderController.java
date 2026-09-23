@@ -19,6 +19,35 @@ public class RenderController {
 
     public static final Set<String> NEED_REMOVE_WHEN_SORT = Set.of("pbody_", "plarm_", "prarm_", "plleg_", "prleg_", "phead_", "p_");
 
+    // Les marqueurs ci-dessus designent des PREFIXES de parties ("pbody_arm", "p_seat"). Ils
+    // etaient retires avec `String.replace`, qui remplace PARTOUT : un os dont le nom contient
+    // "p_" ailleurs qu'au debut etait ampute, ce qui change le tri, donc l'index de visibilite de
+    // cet os et de tous ceux qui suivent — silencieusement, et seulement pour certains modeles.
+    //
+    // Mesure du 24/09/2026 sur le catalogue complet (518 fichiers, 9 417 groupes) : 20 modeles
+    // sont concernes — "hip_control" et "hip_damage" (em_chromoknight, em_sand_golem...),
+    // "hp_bar" (les herobrine), "h_top_jaw", "phip_hip" (les mocap). Aucun n'est dans le lot de 87
+    // converti aujourd'hui, ce qui explique que le contrat y soit verifie a 87/87 : le defaut est
+    // latent et n'aurait explose qu'en elargissant le lot.
+    //
+    // On ne retire donc qu'un PREFIXE, et un seul : le plus long qui corresponde, pour que
+    // l'ordre d'iteration d'un `Set` ne puisse pas changer le resultat.
+    private static final List<String> SORT_MARKER_PREFIXES = NEED_REMOVE_WHEN_SORT.stream()
+            .sorted(Comparator.comparingInt(String::length).reversed())
+            .toList();
+
+    /**
+     * Retire le marqueur de partie en tete du nom, s'il y en a un. Jamais ailleurs qu'en tete.
+     */
+    public static String stripSortMarker(String name) {
+        for (String prefix : SORT_MARKER_PREFIXES) {
+            if (name.startsWith(prefix)) {
+                return name.substring(prefix.length());
+            }
+        }
+        return name;
+    }
+
     private final String modelId;
     private final Map<String, BoneData> bones;
     private final Entity entity;
@@ -163,9 +192,7 @@ public class RenderController {
             while (iterator.hasNext()) {
                 String s = iterator.next();
                 String o = s;
-                for (String r : NEED_REMOVE_WHEN_SORT) {
-                    s = s.replace(r, "");
-                }
+                s = stripSortMarker(s);
                 iterator.set(s);
                 originalId.put(s, o);
             }
